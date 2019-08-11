@@ -30,7 +30,6 @@ end
 
 function light_intensity(x, y)
 	local shadow_col = 0
-
 	local intense = dist(light, { x = x, y = y })
 	local is_lightened = true
 	for k, v in pairs(rocks) do
@@ -57,42 +56,17 @@ function light_intensity(x, y)
 end
 
 function draw_light(light)
-	grain = 15
-	shadow_dist = 150
+	grain = 10
+	shadow_dist = 250
 
 	for i = 0, xres / grain do
 		for j = 0, yres / grain do
 			x = grain * i
 			y = grain * j
-			--(i * grain - light.x) + math.abs(j * grain - light.y)
 
 			shadow_col = light_intensity(x, y)
 			love.graphics.setColor(shadow_col, shadow_col, shadow_col)
 			love.graphics.rectangle("fill", i * grain, j * grain, grain, grain)
-			--[[
-			for k, v in pairs(rocks) do
-				local a = { x = x, y = y }
-				local b = { x = light.x, y = light.y }
-				local c = { x = v.x1, y = v.y1 }
-				local d = { x = v.x2, y = v.y2 }
-
-				if intersec(a, b, c, d) and dist(a, c) < shadow_dist
-					and dist(a, d) < shadow_dist then
-					is_lightened = false
-					shadow_col = math.abs(sarea(a, c, d)) / (2 * dist(c, d))
-					if shadow_col < 10 then
-						shadow_col = 255
-					end
-				end
-			end
-
-			if not is_lightened then
-				love.graphics.setColor(shadow_col, shadow_col, shadow_col)
-				love.graphics.rectangle("fill", i * grain, j * grain, grain, grain)
-			else
-				love.graphics.setColor(200, 200, 200, math.max(0, 255 - intense / 2))
-				love.graphics.rectangle("fill", i * grain, j * grain, grain, grain)
-			end ]]--
 		end
 	end
 end
@@ -113,7 +87,7 @@ function draw_ant(ant)
 	font = love.graphics.newFont("fonts/Kroftsmann.ttf", 40)
 	love.graphics.setFont(font)
 	--text = love.graphics.newText( font, "123")
-	love.graphics.print(math.floor(light_intensity(ant.x, ant.y)), ant.x, ant.y)
+	love.graphics.print(math.floor(light_intensity(ant.x, ant.y)), ant.x, ant.y + 20)
 	-- text:add("123", ant.x, ant.y) --, sx, sy, ox, oy, kx, ky )
 end
 

@@ -38,20 +38,31 @@ function light_intensity(x, y)
 		local c = { x = v.x1, y = v.y1 }
 		local d = { x = v.x2, y = v.y2 }
 
-		if intersec(a, b, c, d) and dist(a, c) < shadow_dist
-			and dist(a, d) < shadow_dist then
-			is_lightened = false
-			shadow_col = math.abs(sarea(a, c, d)) / (2 * dist(c, d))
-			if shadow_col < 10 then
-				shadow_col = 255
+	--	if intersec(a, b, c, d) and dist(a, c) < shadow_dist
+	--		and dist(a, d) < shadow_dist then
+		if intersec(a, b, c, d) then
+			local d = math.abs(sarea(a, c, d)) / (2 * dist(c, d))
+			if d < 70 then
+				if d > 5 then
+					is_lightened = false
+					shadow_col = 0
+				else
+					is_lightened = false
+					shadow_col = 255
+				end
 			end
+
+			--if shadow_col < 10 then
+			--	shadow_col = 255
+			--end
+			--shadow_col = 0
 		end
 	end
 
 	if not is_lightened then
-		return shadow_col
+		return shadow_col / 255
 	else
-		return math.max(0, 255 - intense / 2)
+		return math.max(0, 255 - intense / 2) / 255
 	end
 end
 
@@ -64,7 +75,7 @@ function draw_light(light)
 			x = grain * i
 			y = grain * j
 
-			shadow_col = light_intensity(x, y)
+			local shadow_col = light_intensity(x, y)
 			love.graphics.setColor(shadow_col, shadow_col, shadow_col)
 			love.graphics.rectangle("fill", i * grain, j * grain, grain, grain)
 		end
@@ -72,7 +83,7 @@ function draw_light(light)
 end
 
 function draw_ant(ant)
-	love.graphics.setColor(222, 222, 222)
+	love.graphics.setColor(222/255, 222/255, 222/255)
 	love.graphics.circle("fill", ant.x, ant.y, ant_radius, 8)
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.circle("fill", ant.x, ant.y, ant_radius * 0.9, 8)
@@ -80,14 +91,14 @@ function draw_ant(ant)
 	vec_len = 15
 	vec_x = math.cos(ant.alpha) * vec_len
 	vec_y = math.sin(ant.alpha) * vec_len
-	love.graphics.setColor(200, 1, 1)
+	love.graphics.setColor(200/255, 1/255, 1/255)
 	love.graphics.circle("fill", ant.x - vec_x, ant.y - vec_y, 4, 8)
 
-	love.graphics.setColor(255, 30, 30)
+	love.graphics.setColor(255/255, 30/255, 30/255)
 	font = love.graphics.newFont("fonts/Kroftsmann.ttf", 40)
 	love.graphics.setFont(font)
 	--text = love.graphics.newText( font, "123")
-	love.graphics.print(math.floor(light_intensity(ant.x, ant.y)), ant.x, ant.y + 20)
+	love.graphics.print(math.floor(100 * light_intensity(ant.x, ant.y)), ant.x, ant.y + 20)
 	-- text:add("123", ant.x, ant.y) --, sx, sy, ox, oy, kx, ky )
 end
 
